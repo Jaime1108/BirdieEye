@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BirdieEye - Species Identifier</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f4f7fb 0%, #dfe9f3 100%);
+      color: #1b1f3b;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(27, 31, 59, 0.12);
+      padding: 32px;
+      max-width: 520px;
+      width: 100%;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+    p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+    form {
+      border: 2px dashed #a8b5d3;
+      border-radius: 12px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      background: #f7f9fd;
+    }
+    input[type="file"] {
+      width: 100%;
+    }
+    button {
+      background: #1b1f3b;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(27, 31, 59, 0.25);
+    }
+    .error {
+      color: #b00020;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #eaf7ed;
+      border: 1px solid #bde2c4;
+    }
+    .muted {
+      color: #6b7294;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>BirdieEye</h1>
+    <p>Upload a bird photo and BirdieEye will predict the most likely species using the <code>test-agent.h5</code> model.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+      <label>
+        <span class="muted">Choose a JPG or PNG image</span><br>
+        <input type="file" name="image" accept=".jpg,.jpeg,.png" required>
+      </label>
+      <button type="submit">Identify Bird</button>
+    </form>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if prediction %}
+      <div class="result">
+        <strong>Predicted species:</strong> {{ prediction.species }}<br>
+        <span class="muted">Confidence: {{ prediction.confidence }}</span>
+      </div>
+    {% endif %}
+
+    <p class="muted">API: POST an image to <code>/predict</code> with form-data key <code>image</code>.</p>
+  </main>
+</body>
+</html>
