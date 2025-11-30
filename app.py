@@ -1,14 +1,31 @@
 import logging
 import os
 from typing import List, Optional, Tuple
+from dotenv import load_dotenv
+load_dotenv()
+import json
 
 import numpy as np
 import tensorflow as tf
+from tensorflow import keras
+
 from flask import Flask, jsonify, render_template, request
 from PIL import Image
 from werkzeug.utils import secure_filename
 
-MODEL_PATH = os.getenv("MODEL_PATH", "test-model.h5")
+######## Models ##########
+bird_detection_model = "bird_detection_model.keras"
+model = "baseline_cnn.keras"
+ResNet50Model = "resnet50_finetuned.keras"
+model =  ResNet50Model
+##############
+############################
+with open("class_names.json", "r") as f:
+    class_names = json.load(f)
+############################
+
+
+print("Using model path:", model)
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 TARGET_SIZE: Tuple[int, int] = (224, 224)
 
@@ -28,8 +45,9 @@ def load_labels(path: str = "labels.txt") -> List[str]:
 labels: List[str] = load_labels()
 
 try:
-    logger.info("Loading model from %s", MODEL_PATH)
-    model = tf.keras.models.load_model(MODEL_PATH)
+    logger.info("Loading model from %s", model)
+    model = tf.keras.models.load_model(model)
+    model.summary()
 except Exception as exc:  # pylint: disable=broad-except
     logger.error("Failed to load model: %s", exc)
     model = None
@@ -43,7 +61,7 @@ def preprocess_image(file_stream) -> np.ndarray:
     """Prepare the uploaded image for the model."""
     image = Image.open(file_stream).convert("RGB")
     image = image.resize(TARGET_SIZE)
-    array = np.asarray(image, dtype=np.float32) / 255.0
+    array = np.asarray(image, dtype=np.float32)
     return np.expand_dims(array, axis=0)
 
 
