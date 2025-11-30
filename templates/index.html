@@ -5,46 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BirdieEye - Species Identifier</title>
   <style>
-    :root {
-      color-scheme: light;
-      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #f4f7fb 0%, #dfe9f3 100%);
-      color: #1b1f3b;
-    }
-    body {
-      margin: 0;
-      min-height: 100vh;
+    form{
       display: flex;
-      justify-content: center;
+      width: 80%;
+      flex-direction: column;
+      padding:30px;
+      gap: 15px;
+    }
+    .box{
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-evenly;
       align-items: center;
-      padding: 24px;
     }
-    .card {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 18px 40px rgba(27, 31, 59, 0.12);
-      padding: 32px;
-      max-width: 520px;
-      width: 100%;
+    .all-option{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 50%;
     }
-    h1 {
-      margin: 0 0 12px;
-      font-size: 28px;
+    .option{
+      max-width: 60%;
+      padding:10px;
+      border: #1b1f3b 1px solid;
+      border-radius: 8px;
     }
-    p {
-      margin: 0 0 18px;
-      line-height: 1.6;
-    }
-    form {
-      border: 2px dashed #a8b5d3;
-      border-radius: 12px;
-      padding: 16px;
-      display: grid;
-      gap: 12px;
-      background: #f7f9fd;
-    }
-    input[type="file"] {
-      width: 100%;
+    .option:hover{
+      background-color: #1b1f3b;
+      color: white;
+      cursor: pointer;
     }
     button {
       background: #1b1f3b;
@@ -55,39 +46,67 @@
       cursor: pointer;
       font-size: 15px;
       transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+  .file-upload{
+    border: 2px dashed #1b1f3b;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .upload-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
     }
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(27, 31, 59, 0.25);
-    }
-    .error {
-      color: #b00020;
-      margin-top: 12px;
-      font-weight: 600;
-    }
-    .result {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #eaf7ed;
-      border: 1px solid #bde2c4;
-    }
-    .muted {
-      color: #6b7294;
-      font-size: 14px;
-    }
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(27, 31, 59, 0.25);
+  }
   </style>
 </head>
 <body>
+  <header class="header">
+     <h1 id="main-title">Bird Species Identifier</h1>
+     <p id="subtitle">Upload a bird photo and select an AI model to identify the species</p>
+  </header>
+
+
   <main class="card">
-    <h1>BirdieEye</h1>
-    <p>Upload a bird photo and BirdieEye will predict the most likely species using the <code>test-agent.h5</code> model.</p>
 
     <form method="POST" enctype="multipart/form-data">
-      <label>
-        <span class="muted">Choose a JPG or PNG image</span><br>
-        <input type="file" name="image" accept=".jpg,.jpeg,.png" required>
-      </label>
+      <div class="box">
+
+      
+        <div class="all-option" style="padding: 5px;">
+          <label for="model-select">Select AI Model:</label>
+          <div class="option">
+            <input type="radio" id="baseline_cnn.keras" name="model" value="baseline_cnn.keras" unchecked>
+            <label for="baseline_cnn.keras">Baseline CNN</label>
+          </div>
+          <div class="option">
+            <input type="radio" id="resnet50_finetuned.keras" name="model" value="resnet50_finetuned.keras" unchecked>
+            <label for="resnet50_finetuned.keras">ResNet50</label>
+          </div>
+          <div class="option">
+            <input type="radio" id="efficientnet_finetuned.keras" name="model" value="efficientnet_finetuned.keras" unchecked>
+            <label for="efficientnet_finetuned.keras">EfficientNet</label>
+          </div>
+        </div>
+        <div class="file-upload">
+          
+          <label>
+            
+            <span class="muted">Choose a JPG or PNG image</span><br>
+            <div class="upload-icon">
+              🦅
+            </div>
+            <h3>Drop bird image here</h3>
+            <p>or click to browse</p>
+            <input type="file" name="image" accept=".jpg,.jpeg,.png" required>
+            
+          </label>
+        </div>
+      </div>
       <button type="submit">Identify Bird</button>
     </form>
 
@@ -106,3 +125,4 @@
   </main>
 </body>
 </html>
+<!--test-->
