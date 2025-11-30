@@ -14,10 +14,13 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 
 ######## Models ##########
+
 bird_detection_model = "bird_detection_model.keras"
-model = "baseline_cnn.keras"
-ResNet50Model = "resnet50_finetuned.keras"
-model =  ResNet50Model
+CNNModel = "baseline_cnn.keras"
+ResNetModel = "resnet50_finetuned.keras"
+EfficientNetModel = "efficientnet_finetuned.keras"
+modelName = CNNModel
+#model =  ResNet50Model
 ##############
 ############################
 with open("class_names.json", "r") as f:
@@ -25,7 +28,7 @@ with open("class_names.json", "r") as f:
 ############################
 
 
-print("Using model path:", model)
+print("Using model path:", modelName)
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 TARGET_SIZE: Tuple[int, int] = (224, 224)
 
@@ -33,6 +36,9 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+with open("class_names.json", "r") as f:
+    class_names = json.load(f)
 
 def load_labels(path: str = "labels.txt") -> List[str]:
     """Return class labels if a labels.txt file exists."""
@@ -44,13 +50,7 @@ def load_labels(path: str = "labels.txt") -> List[str]:
 
 labels: List[str] = load_labels()
 
-try:
-    logger.info("Loading model from %s", model)
-    model = tf.keras.models.load_model(model)
-    model.summary()
-except Exception as exc:  # pylint: disable=broad-except
-    logger.error("Failed to load model: %s", exc)
-    model = None
+
 
 
 def allowed_file(filename: str) -> bool:
@@ -65,7 +65,7 @@ def preprocess_image(file_stream) -> np.ndarray:
     return np.expand_dims(array, axis=0)
 
 
-def predict_species(file_stream) -> Optional[dict]:
+def predict_species(file_stream, model) -> Optional[dict]:
     if model is None:
         return None
 
@@ -75,29 +75,56 @@ def predict_species(file_stream) -> Optional[dict]:
     confidence = float(np.max(prediction[0]))
     species_name = labels[top_index] if labels and top_index < len(labels) else f"class_{top_index}"
     return {
-        "species": species_name,
+        "species": decipherSpeciesName(species_name),
         "confidence": round(confidence, 4),
         "raw_prediction": prediction[0].tolist(),
     }
 
+def decipherSpeciesName(output):
+    print("Raw output:", output)
+    birdNameIndex = output[6:]
+    print("Bird Name Index:", birdNameIndex)
+    birdName = class_names[int(birdNameIndex)]
+    birdNameClean = birdName.replace("_", " ")
+    return birdNameClean
 
+def choosingModel(option):
+    match option:
+        case "baselineCNN":
+            return CNNModel
+        case "resnet50":
+            return ResNetModel
+        case _:
+            return EfficientNetModel
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None
     error = None
 
     if request.method == "POST":
+        print("Model selected:", request.form.get("model"))
+        modelName = choosingModel(request.form.get("model"))
         file = request.files.get("image")
+        try:
+            logger.info("Loading model from %s", modelName)
+            model = tf.keras.models.load_model(modelName)
+            model.summary()
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.error("Failed to load model: %s", exc)
+            model = None
+
+
         if not file or file.filename == "":
             error = "Please choose an image to upload."
         elif not allowed_file(file.filename):
             error = "Unsupported file type. Please upload a JPG or PNG image."
         else:
             filename = secure_filename(file.filename)
+            logger.info("Loading model from %s", model)
             logger.info("Received upload: %s", filename)
             try:
                 file.stream.seek(0)
-                prediction = predict_species(file.stream)
+                prediction = predict_species(file.stream, model)
                 if prediction is None:
                     error = "Model failed to predict."
             except Exception as exc:  # pylint: disable=broad-except
@@ -114,7 +141,6 @@ def predict_api():
         return jsonify({"error": "No image uploaded."}), 400
     if not allowed_file(file.filename):
         return jsonify({"error": "Unsupported file type. Please upload a JPG or PNG image."}), 400
-
     try:
         file.stream.seek(0)
         prediction = predict_species(file.stream)

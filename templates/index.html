@@ -5,124 +5,650 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BirdieEye - Species Identifier</title>
   <style>
-    form{
-      display: flex;
-      width: 80%;
-      flex-direction: column;
-      padding:30px;
-      gap: 15px;
+    * {
+      box-sizing: border-box;
     }
-    .box{
-      border: 1px solid #ccc;
-      padding: 15px;
-      border-radius: 8px;
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      padding: 2rem;
       display: flex;
-      justify-content: space-evenly;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .main-container {
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: #fff;
+    }
+
+    .header h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      margin: 0 0 0.75rem 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      font-size: 1.125rem;
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      color: #1e293b;
+      margin: 0 0 1.5rem 0;
+      display: flex;
       align-items: center;
+      gap: 0.5rem;
     }
-    .all-option{
+
+    /* Model selector */
+
+    .model-selector {
+      margin-bottom: 1.5rem;
+    }
+
+    .model-selector-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+
+    .model-options {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      width: 50%;
+      gap: 0.75rem;
     }
-    .option{
-      max-width: 60%;
-      padding:10px;
-      border: #1b1f3b 1px solid;
+
+    .model-option {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
       border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #f8fafc;
     }
-    .option:hover{
-      background-color: #1b1f3b;
-      color: white;
+
+    .model-option:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .model-option.selected {
+      border-color: #3b82f6;
+      background: #dbeafe;
+    }
+
+    .model-option input[type="radio"] {
+      margin-right: 0.75rem;
+      width: 18px;
+      height: 18px;
       cursor: pointer;
     }
-    button {
-      background: #1b1f3b;
-      color: white;
-      border: none;
-      padding: 12px 16px;
-      border-radius: 10px;
+
+    .model-info {
+      flex: 1;
+    }
+
+    .model-name {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .model-desc {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    /* Upload zone */
+
+    .upload-zone {
+      border: 3px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      background: #f8fafc;
+      transition: all 0.3s ease;
       cursor: pointer;
-      font-size: 15px;
-      transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-  .file-upload{
-    border: 2px dashed #1b1f3b;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .upload-icon {
+    }
+
+    .upload-zone:hover {
+      border-color: #3b82f6;
+      background: #f1f5f9;
+    }
+
+    .upload-zone.drag-over {
+      border-color: #3b82f6;
+      background: #dbeafe;
+    }
+
+    .upload-icon {
       font-size: 3.5rem;
       margin-bottom: 1rem;
     }
-  button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(27, 31, 59, 0.25);
-  }
+
+    .upload-zone h3 {
+      font-size: 1.125rem;
+      color: #334155;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .upload-zone p {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0 0 1rem 0;
+    }
+
+    .upload-button {
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    }
+
+    .upload-button:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(27, 31, 59, 0.25);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .image-preview {
+      display: none;
+      margin-top: 1.5rem;
+    }
+
+    .image-preview.active {
+      display: block;
+    }
+
+    .preview-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      background: #f1f5f9;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 400px;
+      object-fit: contain;
+    }
+
+    .remove-button {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(239, 68, 68, 0.95);
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background 0.2s ease;
+    }
+
+    .remove-button:hover {
+      background: rgba(220, 38, 38, 0.95);
+    }
+
+    .analyze-button {
+      width: 100%;
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      padding: 1rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    }
+
+    .analyze-button:hover {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+    }
+
+    .analyze-button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Error + muted */
+
+    .muted {
+      font-size: 0.875rem;
+      color: #e2e8f0;
+      opacity: 0.9;
+    }
+
+    .error-card {
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #ef4444;
+    }
+
+    .error-text {
+      color: #b91c1c;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Results */
+
+    .results-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      margin-bottom: 1.5rem;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .results-header h2 {
+      font-size: 1.75rem;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    .model-badge {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .prediction-item {
+      display: flex;
+      align-items: center;
+      padding: 1.25rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      gap: 1rem;
+    }
+
+    .prediction-rank {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+      min-width: 2rem;
+    }
+
+    .prediction-content {
+      flex: 1;
+    }
+
+    .prediction-label {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .prediction-confidence {
+      font-size: 0.95rem;
+      color: #475569;
+    }
+
+    .prediction-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .prediction-bar {
+      flex: 1;
+      background: #e2e8f0;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .prediction-fill {
+      background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+      height: 100%;
+      border-radius: 5px;
+      width: 0%;
+    }
+
+    /* Footer API text */
+
+    .api-text {
+      text-align: center;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+    }
+
+    .api-text code {
+      font-family: monospace;
+      background: rgba(15, 23, 42, 0.3);
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+      .app-wrapper {
+        padding: 1rem;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .header p {
+        font-size: 1rem;
+      }
+
+      .card,
+      .results-card {
+        padding: 1.5rem;
+      }
+
+      .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-     <h1 id="main-title">Bird Species Identifier</h1>
-     <p id="subtitle">Upload a bird photo and select an AI model to identify the species</p>
-  </header>
+  <div class="app-wrapper">
+    <div class="main-container">
+      <header class="header">
+        <h1 id="main-title">Bird Species Identifier</h1>
+        <p id="subtitle">Upload a bird photo and select an AI model to identify the species</p>
+      </header>
 
+      <main>
+        <!-- Main form -->
+        <form method="POST" enctype="multipart/form-data" class="content-grid">
+          <!-- Model selection card -->
+          <div class="card">
+            <h2>🧠 Select AI Model</h2>
+            <div class="model-selector">
+              <span class="model-selector-label">Choose a model:</span>
+              <div class="model-options">
+                <label class="model-option selected" data-model="baseline_cnn.keras">
+                  <input
+                    type="radio"
+                    id="baseline_cnn.keras"
+                    name="model"
+                    value="baselineCNN"
+                    checked
+                  >
+                  <div class="model-info">
+                    <div class="model-name">Baseline CNN</div>
+                    <div class="model-desc">Classic convolutional network, fast and simple.</div>
+                  </div>
+                </label>
 
-  <main class="card">
+                <label class="model-option" data-model="resnet50_finetuned.keras">
+                  <input
+                    type="radio"
+                    id="resnet50_finetuned.keras"
+                    name="model"
+                    value="resnet50"
+                  >
+                  <div class="model-info">
+                    <div class="model-name">ResNet50</div>
+                    <div class="model-desc">50-layer residual network, strong baseline accuracy.</div>
+                  </div>
+                </label>
 
-    <form method="POST" enctype="multipart/form-data">
-      <div class="box">
-
-      
-        <div class="all-option" style="padding: 5px;">
-          <label for="model-select">Select AI Model:</label>
-          <div class="option">
-            <input type="radio" id="baseline_cnn.keras" name="model" value="baseline_cnn.keras" unchecked>
-            <label for="baseline_cnn.keras">Baseline CNN</label>
-          </div>
-          <div class="option">
-            <input type="radio" id="resnet50_finetuned.keras" name="model" value="resnet50_finetuned.keras" unchecked>
-            <label for="resnet50_finetuned.keras">ResNet50</label>
-          </div>
-          <div class="option">
-            <input type="radio" id="efficientnet_finetuned.keras" name="model" value="efficientnet_finetuned.keras" unchecked>
-            <label for="efficientnet_finetuned.keras">EfficientNet</label>
-          </div>
-        </div>
-        <div class="file-upload">
-          
-          <label>
-            
-            <span class="muted">Choose a JPG or PNG image</span><br>
-            <div class="upload-icon">
-              🦅
+                <label class="model-option" data-model="efficientnet_finetuned.keras">
+                  <input
+                    type="radio"
+                    id="efficientnet_finetuned.keras"
+                    name="model"
+                    value="EfficientNet"
+                  >
+                  <div class="model-info">
+                    <div class="model-name">EfficientNet</div>
+                    <div class="model-desc">High performance with excellent efficiency.</div>
+                  </div>
+                </label>
+              </div>
             </div>
-            <h3>Drop bird image here</h3>
-            <p>or click to browse</p>
-            <input type="file" name="image" accept=".jpg,.jpeg,.png" required>
-            
-          </label>
+          </div>
+
+          <!-- Upload card -->
+          <div class="card">
+            <h2>📤 Upload Image</h2>
+
+            <label for="image-input">
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">🦅</div>
+                <h3>Drop bird image here</h3>
+                <p>or click to browse</p>
+                <button type="button" class="upload-button">Choose Image</button>
+              </div>
+            </label>
+
+            <!-- Important: keep name="image" for Flask -->
+            <input
+              type="file"
+              id="image-input"
+              name="image"
+              accept=".jpg,.jpeg,.png"
+              required
+            >
+
+            <div class="image-preview" id="image-preview">
+              <div class="preview-container">
+                <img id="preview-image" class="preview-image" alt="Uploaded bird image preview">
+                <button type="button" class="remove-button" id="remove-button">✕ Remove</button>
+              </div>
+              <button type="submit" class="analyze-button" id="analyze-button">
+                🔍 Identify Bird
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Error message -->
+        {% if error %}
+        <div class="card error-card">
+          <p class="error-text">{{ error }}</p>
         </div>
-      </div>
-      <button type="submit">Identify Bird</button>
-    </form>
+        {% endif %}
 
-    {% if error %}
-      <div class="error">{{ error }}</div>
-    {% endif %}
+        <!-- Results from backend -->
+        {% if prediction %}
+        <div class="results-card">
+          <div class="results-header">
+            <h2 id="results-title">Top Prediction</h2>
+            {% if prediction.model %}
+            <div class="model-badge" id="used-model">
+              {{ prediction.model }}
+            </div>
+            {% endif %}
+          </div>
 
-    {% if prediction %}
-      <div class="result">
-        <strong>Predicted species:</strong> {{ prediction.species }}<br>
-        <span class="muted">Confidence: {{ prediction.confidence }}</span>
-      </div>
-    {% endif %}
+          <div class="prediction-item">
+            <div class="prediction-rank">🏆</div>
+            <div class="prediction-content">
+              <div class="prediction-label">
+                {{ prediction.species }}
+              </div>
+              <div class="prediction-confidence">
+                Confidence:
+                {% if prediction.confidence is defined %}
+                  {{ (prediction.confidence * 100) | round(1) }}%
+                {% else %}
+                  N/A
+                {% endif %}
+              </div>
 
-    <p class="muted">API: POST an image to <code>/predict</code> with form-data key <code>image</code>.</p>
-  </main>
+              {% if prediction.confidence is defined %}
+              <div class="prediction-bar-container">
+                <div class="prediction-bar">
+                  <div
+                    class="prediction-fill"
+                    style="width: {{ (prediction.confidence * 100) | round(0, 'floor') }}%;"
+                  ></div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <p class="api-text">
+          API: POST an image to <code>/predict</code> with form-data key <code>image</code>.
+        </p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Model card selection styling
+    const modelOptions = document.querySelectorAll('.model-option');
+
+    modelOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        modelOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        const radio = option.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.checked = true;
+        }
+      });
+    });
+
+    // Upload + preview logic
+    const fileInput = document.getElementById('image-input');
+    const uploadZone = document.getElementById('upload-zone');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImage = document.getElementById('preview-image');
+    const removeButton = document.getElementById('remove-button');
+    const analyzeButton = document.getElementById('analyze-button');
+
+    function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        imagePreview.classList.add('active');
+        analyzeButton.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    uploadZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files; // so the form actually submits the dropped file
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      handleFile(file);
+    });
+
+    removeButton.addEventListener('click', () => {
+      fileInput.value = '';
+      previewImage.src = '';
+      imagePreview.classList.remove('active');
+      analyzeButton.disabled = true;
+    });
+
+    // Disable submit until an image is chosen (optional UX)
+    analyzeButton.disabled = !fileInput.files.length;
+  </script>
 </body>
 </html>
-<!--test-->
