@@ -5,3 +5,4 @@ env/
 instance/
 *.h5
 uploads/
+*.keras
