@@ -11,7 +11,7 @@ RUN pip install --upgrade tensorflow==2.20.0 keras==3.12.0
 # copy application files
 RUN mkdir -p /model
 COPY . .
-COPY model/test-model.h5 /model/test-model.h5
+#COPY model/test-model.h5 /model/test-model.h5
 
 ENV FLASK_APP=app.py
 CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
