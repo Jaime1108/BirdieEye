@@ -4,11 +4,17 @@ Simple Flask service that loads `test-agent.h5` and predicts the bird species fr
 
 ## Setup
 1. Create and activate a virtual environment (optional but recommended).
-2. Install dependencies:
+   a. running via the docker container, go to the file directory, execute all the following command in order
+   ```bash
+   docker build -t birdie .
+   docker run -p 8080:8080 birdie
+   ```
+   b. visit https://localhost:8080
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Place your trained Keras model at `test-agent.h5` in this folder. Optionally add a `labels.txt` file (one class label per line) to map class indices to species names.
+4. Place your trained Keras model at `test-agent.h5` in this folder. Optionally add a `labels.txt` file (one class label per line) to map class indices to species names.
 
 ## Run the server
 ```bash
