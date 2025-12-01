@@ -6,3 +6,4 @@ instance/
 *.h5
 uploads/
 *.keras
+.env
