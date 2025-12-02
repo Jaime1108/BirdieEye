@@ -21,7 +21,6 @@ CNNModel = "baseline_cnn.keras"
 ResNetModel = "resnet50_finetuned.keras"
 EfficientNetModel = "efficientnet_finetuned.keras"
 modelName = CNNModel    
-#model =  ResNet50Model
 ##############
 ############################
 with open("class_names.json", "r") as f:
@@ -130,7 +129,8 @@ def index():
         print("Model selected:", request.form.get("model"))
         modelName = choosingModel(request.form.get("model"))
         file = request.files.get("image")
-        
+        ############
+        '''
         print("check for valid bird images")
         isValidBird = predict_valid_bird(file.stream)
         print("isValidBird:", isValidBird)
@@ -138,8 +138,8 @@ def index():
             print("Invalid bird image")
             error = "The image you upload is not a valid bird image."
             return render_template("index.html", prediction=None, error=error)
-        
-            
+        '''
+        #############    
         try:
             logger.info("Loading model from %s", modelName)
             model = tf.keras.models.load_model(modelName)
@@ -187,4 +187,4 @@ def predict_api():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=False)
