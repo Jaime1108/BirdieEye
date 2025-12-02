@@ -14,12 +14,13 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 
 ######## Models ##########
-
-bird_detection_model = "bird_detection_model.keras"
+birdValid = ""
+bird_detection_model = "baseline_cnn_bird_detector.keras"
 CNNModel = "baseline_cnn.keras"
+
 ResNetModel = "resnet50_finetuned.keras"
 EfficientNetModel = "efficientnet_finetuned.keras"
-modelName = CNNModel
+modelName = CNNModel    
 #model =  ResNet50Model
 ##############
 ############################
@@ -31,6 +32,8 @@ with open("class_names.json", "r") as f:
 print("Using model path:", modelName)
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 TARGET_SIZE: Tuple[int, int] = (224, 224)
+
+isBird = [True, False]
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -79,14 +82,36 @@ def predict_species(file_stream, model) -> Optional[dict]:
         "confidence": round(confidence, 4),
         "raw_prediction": prediction[0].tolist(),
     }
+def predict_valid_bird(file_stream) -> bool:
+    if bird_detection_model is None:
+        return None
 
+    image_tensor = preprocess_image(file_stream)
+    prediction = tf.keras.models.load_model(bird_detection_model).predict(image_tensor)
+    top_index = int(np.argmax(prediction[0]))
+    confidence = float(np.max(prediction[0]))
+    choice = labels[top_index] if labels and top_index < len(labels) else f"class_{top_index}"
+    return decipherIsBird(choice)
 def decipherSpeciesName(output):
     print("Raw output:", output)
-    birdNameIndex = output[6:]
+    birdNameIndex = decipherPrediction(output)
     print("Bird Name Index:", birdNameIndex)
     birdName = class_names[int(birdNameIndex)]
     birdNameClean = birdName.replace("_", " ")
     return birdNameClean
+
+def decipherPrediction(output):
+    print("Raw output:", output)
+    predictionIndex = output[6:]
+    print("Bird Name Index:", predictionIndex)
+    return int(predictionIndex)
+
+def decipherIsBird(output)  -> bool:
+    print("Raw output:", output)
+    choiceIndex = decipherPrediction(output)
+    print("choice Index:", choiceIndex)
+    return isBird[int(choiceIndex)]
+
 
 def choosingModel(option):
     match option:
@@ -100,11 +125,21 @@ def choosingModel(option):
 def index():
     prediction = None
     error = None
-
+    isValidBird = True
     if request.method == "POST":
         print("Model selected:", request.form.get("model"))
         modelName = choosingModel(request.form.get("model"))
         file = request.files.get("image")
+        
+        print("check for valid bird images")
+        isValidBird = predict_valid_bird(file.stream)
+        print("isValidBird:", isValidBird)
+        if isValidBird is False:
+            print("Invalid bird image")
+            error = "The image you upload is not a valid bird image."
+            return render_template("index.html", prediction=None, error=error)
+        
+            
         try:
             logger.info("Loading model from %s", modelName)
             model = tf.keras.models.load_model(modelName)
@@ -112,7 +147,6 @@ def index():
         except Exception as exc:  # pylint: disable=broad-except
             logger.error("Failed to load model: %s", exc)
             model = None
-
 
         if not file or file.filename == "":
             error = "Please choose an image to upload."
