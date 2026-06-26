@@ -1,11 +1,50 @@
 # BirdieEye
 
-##Overview
-A Machine Learning project specializing in
-1. Detect Bird
-2. Classifying species of birds with Convolutional Neural Network, ResNet50, and EfficientNet
+BirdieEye is a deep learning bird recognition project that detects birds in images and classifies bird species using multiple CNN-based models. The project includes a Flask web app where users can upload a bird image, select a model, and receive a prediction.
 
-This GitHub repository serves as a simple Flask service that loads `test-agent.h5` and predicts the bird species from an uploaded image. Includes an HTML form at `/` and a JSON API at `/predict`.
+## Feature
+
+- Bird object detection
+- Bird species classification
+- Image upload through a Flask web interface
+- JSON prediction API
+- Support for multiple deep learning models
+
+## Models
+
+This project includes 4 trained models:
+
+1. Baseline CNN Bird Object Detector
+2. Baseline CNN Bird Species Classifier
+3. ResNet50 Bird Species Classifier
+4. EfficientNet Bird Species Classifier
+
+## Tech Stack
+
+- Python
+- Flask
+- TensorFlow / Keras
+- NumPy
+- Matplotlib
+- scikit-learn
+- Docker
+- HTML / CSS
+
+
+## Project Structure
+
+```text
+BirdieEye/
+├── app.py
+├── requirements.txt
+├── class_name.json
+├── Dockerfile
+├── test-agent.h5
+├── labels.txt
+├── templates/
+│   └── index.html
+└── static/
+```
 
 ## Setup
 1. Create and activate a virtual environment (optional but recommended).
