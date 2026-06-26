@@ -1,6 +1,11 @@
 # BirdieEye
 
-Simple Flask service that loads `test-agent.h5` and predicts the bird species from an uploaded image. Includes an HTML form at `/` and a JSON API at `/predict`.
+##Overview
+A Machine Learning project specializing in
+1. Detect Bird
+2. Classifying species of birds with Convolutional Neural Network, ResNet50, and EfficientNet
+
+This GitHub repository serves as a simple Flask service that loads `test-agent.h5` and predicts the bird species from an uploaded image. Includes an HTML form at `/` and a JSON API at `/predict`.
 
 ## Setup
 1. Create and activate a virtual environment (optional but recommended).
