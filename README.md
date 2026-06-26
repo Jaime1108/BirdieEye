@@ -10,6 +10,15 @@ BirdieEye is a deep learning bird recognition project that detects birds in imag
 - JSON prediction API
 - Support for multiple deep learning models
 
+## Demo 
+
+| Step | Screenshot |
+|------|------------|
+| **1. Launch the web application** | ![](screenshot/step1.png) |
+| **2. Upload a bird image** | ![](screenshot/step2.png) |
+| **3. Select one of the four models** | ![](screenshot/step3.png) |
+| **4. View the prediction results** | ![](screenshot/step4.png) |
+
 ## Models
 
 This project includes 4 trained models:
