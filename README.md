@@ -46,6 +46,31 @@ BirdieEye/
 └── static/
 ```
 
+## Trained Model Download Link
+
+The trained vision models are not stored directly in this repository because the files are too large for GitHub. I have instead uploaded them to this google drive link:
+[Download trained models](https://drive.google.com/file/d/1c6LfUSzJgaKwcR7MyVBCdiK2_-5dPa9G/view?usp=sharing)
+
+After downloading:
+
+1. Extract the zip file.
+2. Move the 4 trained model files into the project root directory.
+3. Make sure the model filenames match the names expected by `app.py`.
+
+Example structure:
+
+```text
+BirdieEye/
+├── app.py
+├── requirements.txt
+├── baseline_bird_detector.h5
+├── baseline_bird_classifier.h5
+├── resnet50_bird_classifier.h5
+├── efficientnet_bird_classifier.h5
+└── .....
+
+```
+
 ## Setup
 1. Create and activate a virtual environment (optional but recommended).
    a. running via the docker container, go to the file directory, execute all the following command in order
